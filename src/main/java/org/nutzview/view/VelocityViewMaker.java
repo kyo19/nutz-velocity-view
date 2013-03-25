@@ -9,7 +9,7 @@ public class VelocityViewMaker implements ViewMaker {
     @Override
     public View make(Ioc ioc, String type, String value) {
         if ("vm".equalsIgnoreCase(type)) {
-            return new VelocityTemplateView(value);
+            return new VelocityLayoutView(value);
         }
         return null;
     }
