@@ -2,7 +2,6 @@ package org.nutzview.view;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +13,8 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.io.VelocityWriter;
 import org.apache.velocity.util.SimplePool;
 import org.nutz.mvc.view.AbstractPathView;
+import org.nutzview.model.IModel;
+import org.nutzview.model.ModelProcesser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class VelocityLayoutView extends AbstractPathView {
 
 	private static final Logger LOG = LoggerFactory.getLogger(VelocityLayoutView.class);
 
-	protected static final int WRITER_BUFFER_SIZE = 32 * 1024;
+	protected static final int WRITER_BUFFER_SIZE = 8 * 1024;
 
 	protected SimplePool writerPool = new SimplePool(40);
 
@@ -30,33 +31,39 @@ public class VelocityLayoutView extends AbstractPathView {
 	 */
 	public static final String DEFAULT_DEFAULT_LAYOUT = "layout/default.html";
 
-
 	public static final String KEY_SCREEN_CONTENT = "_screen_content";
 
 	public VelocityLayoutView(String dest) {
 		super(dest);
 	}
 
-	public void render(HttpServletRequest req, HttpServletResponse resp, Object obj) throws Throwable {
+	@Override
+	public void render(HttpServletRequest req, HttpServletResponse resp, Object obj) throws Exception {
 		String path = evalPath(req, obj);
+
 		resp.setContentType("text/html;charset=\"UTF-8\"");
 		resp.setCharacterEncoding("UTF-8");
-
+		System.out.println(obj);
+		System.out.println(obj.getClass());
 		try {
-
+			
+			IModel model = ModelProcesser.getInstance().process(obj);
+			
 			Context context = new VelocityContext();
 			StringWriter sw = new StringWriter();
 
 			context.put("base", req.getContextPath());
-			context.put("data", obj);
+			context.put("data", model.getValue("data"));
+			context.put("_title_name", model.getTitleName());
+			context.put("request", req);
+			context.put("session", req.getSession());
 
-			context.put("_title_name", "页面Tab模板例子");
-
-			Template template = Velocity.getTemplate("templates" + path);
+			Template template = Velocity.getTemplate(path);
 			template.merge(context, sw);
+
 			context.put(KEY_SCREEN_CONTENT, sw.toString());
 
-			Template tmp = Velocity.getTemplate("templates/" + DEFAULT_DEFAULT_LAYOUT);
+			Template tmp = Velocity.getTemplate(DEFAULT_DEFAULT_LAYOUT);
 
 			internalRenderTemplate(tmp, context, resp.getWriter());
 
@@ -91,5 +98,10 @@ public class VelocityLayoutView extends AbstractPathView {
 			writer.flush();
 			writer.close();
 		}
+	}
+
+	public Context createVmContext(Object obj) {
+
+		return null;
 	}
 }

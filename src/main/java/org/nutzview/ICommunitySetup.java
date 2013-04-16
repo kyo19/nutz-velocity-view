@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class ICommunitySetup implements Setup {
 
 	private static final Logger log = LoggerFactory.getLogger(ICommunitySetup.class);
-	
+
 	@Override
 	public void init(NutConfig config) {
 		velocityInit();
@@ -26,13 +26,14 @@ public class ICommunitySetup implements Setup {
 	private void velocityInit() {
 		log.info("Veloctiy引擎初始化...");
 		Properties p = new Properties();
-		p.setProperty("file.resource.loader.class",
-				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		p.setProperty("file.resource.loader.path", "templates");
+		p.setProperty("resource.loader", "file,classloader");
+		p.setProperty("file", "org.apache.velocity.tools.view.WebappResourceLoader");
+		p.setProperty("classloader.resource.loader.class", "org.nutzview.util.MyClasspathResourceLoader");
+		p.setProperty("classloader.resource.loader.path", "templates");
 		p.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
 		p.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
 		p.setProperty("velocimacro.library.autoreload", "false");
-		p.setProperty("file.resource.loader.root", "templates");
+		p.setProperty("classloader.resource.loader.root", "templates");
 		p.setProperty("velocimarco.library.autoreload", "true");
 		p.setProperty("runtime.log.error.stacktrace", "false");
 		p.setProperty("runtime.log.warn.stacktrace", "false");
@@ -43,5 +44,4 @@ public class ICommunitySetup implements Setup {
 		Velocity.init(p);
 		log.info("Veloctiy引擎初始化完成。");
 	}
-
 }
