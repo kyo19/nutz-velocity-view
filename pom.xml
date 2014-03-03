@@ -56,12 +56,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.hyperic.sigar</groupId>
 			<artifactId>com.springsource.org.hyperic.sigar</artifactId>
 			<version>1.6.3</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-webmvc</artifactId> 
+		<dependency> <groupId>org.springframework</groupId> <artifactId>spring-webmvc</artifactId> 
 			<version>3.1.1.RELEASE</version> </dependency> -->
 		<dependency>
 			<groupId>asm</groupId>
